@@ -27,20 +27,18 @@ import java.util.concurrent.Executors;
 public class HomeActivity extends AppCompatActivity {
     MyRecyclerViewAdapter myAdapter;
     TextView tv;
+    RecyclerView recycler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        List<String> testAdapter = new ArrayList<>();
-        for (int i = 0; i < 200; i++) {
-            testAdapter.add("element " + i);
-        }
-        RecyclerView recycler = findViewById(R.id.adapter);
+        List<Coin> coins = new ArrayList<>();
+        recycler = findViewById(R.id.adapter);
         LinearLayoutManager lmn = new LinearLayoutManager(this);
-        lmn.setOrientation(RecyclerView.HORIZONTAL);
+        lmn.setOrientation(RecyclerView.VERTICAL);
         recycler.setLayoutManager(lmn);
-        myAdapter = new MyRecyclerViewAdapter(testAdapter);
+        myAdapter = new MyRecyclerViewAdapter(coins);
         recycler.setAdapter(myAdapter);
 
         tv = findViewById(R.id.tv);
@@ -52,14 +50,16 @@ public class HomeActivity extends AppCompatActivity {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                String data = getDataFromHTTP("https://api.coinstats.app/public/v1/coins?skip=0&limit=10");
+                String data = getDataFromHTTP("https://openapiv1.coinstats.app/coins", "srkjExa1IBZMMoDmd5YTI4sWbLpce8KFavfrzjbKKvU=");
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            tv.setText(decodeJSON(data));
-                        } catch (JSONException e) {
-                            tv.setText("Ville non trouvée");
+                            List<Coin> coinList = decodeJSON(data);
+                            myAdapter = new MyRecyclerViewAdapter(coinList);
+                            recycler.setAdapter(myAdapter);
+                        } catch (Exception e) {
+                            tv.setText("Erreur lors de la recup crypto");
                         }
                     }
                 });
@@ -67,37 +67,66 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    public String getDataFromHTTP(String param){
-
+    public String getDataFromHTTP(String param, String apiKey) {
         StringBuilder result = new StringBuilder();
         HttpURLConnection connexion = null;
         try {
+            // Création de l'URL
             URL url = new URL(param);
             connexion = (HttpURLConnection) url.openConnection();
+
+            // Définition de la méthode GET
             connexion.setRequestMethod("GET");
+
+            // Ajout des en-têtes (API key et accept: application/json)
+            connexion.setRequestProperty("X-API-KEY", apiKey);
+            connexion.setRequestProperty("accept", "application/json");
+
+            // Lecture de la réponse
             InputStream inputStream = connexion.getInputStream();
-            InputStreamReader inputStreamReader = new
-                    InputStreamReader(inputStream);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             BufferedReader bf = new BufferedReader(inputStreamReader);
-            String ligne = "";
+
+            String ligne;
             while ((ligne = bf.readLine()) != null) {
                 result.append(ligne);
             }
+
+            // Fermeture des flux
             inputStream.close();
             bf.close();
+
+            // Déconnexion de la connexion
             connexion.disconnect();
         } catch (Exception e) {
-            result = new StringBuilder("Erreur ");
+            // En cas d'erreur, renvoie un message d'erreur
+            result = new StringBuilder("Erreur lors de la récupération des données");
+            e.printStackTrace();
         }
         return result.toString();
     }
 
-    public String decodeJSON(String json) throws JSONException {
-        JSONObject jso = new JSONObject(json);
-        JSONArray coins = jso.getJSONArray("coins");
-        for (int i=0; ) {
+    public List<Coin> decodeJSON(String json) throws JSONException {
+        List<Coin> coinList = new ArrayList<>();
 
+        JSONObject jsonObject = new JSONObject(json);
+        JSONArray coinsArray = jsonObject.getJSONArray("result");
+
+        for (int i = 0; i < coinsArray.length(); i++) {
+            JSONObject coinObject = coinsArray.getJSONObject(i);
+
+            String icon = coinObject.getString("icon");
+            String name = coinObject.getString("name");
+            String symbol = coinObject.getString("symbol");
+            int rank = coinObject.getInt("rank");
+            double price = coinObject.getDouble("price");
+
+            // Créer un objet Coin et l'ajouter à la liste
+            Coin coin = new Coin(name, symbol, icon, rank, price);
+            coinList.add(coin);
         }
-        return nom_crypto;
+
+        return coinList;
     }
+
 }
