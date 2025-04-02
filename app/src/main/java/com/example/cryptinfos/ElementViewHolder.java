@@ -16,7 +16,6 @@ public class ElementViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         nameTextView = itemView.findViewById(R.id.coinName);
         symbolTextView = itemView.findViewById(R.id.coinSymbol);
-        rankTextView = itemView.findViewById(R.id.coinRank);
         priceTextView = itemView.findViewById(R.id.coinPrice);
         iconImageView = itemView.findViewById(R.id.coinIcon);
     }

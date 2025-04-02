@@ -1,0 +1,40 @@
+package com.example.cryptinfos;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.widget.Toast;
+
+
+public class NetworkReceiver extends BroadcastReceiver {
+
+    private static boolean firstCheck = true;
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (intent.getAction() != null && intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm != null) {
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+                // Si c'est le premier appel, on ne fait rien et on met firstCheck à false
+                if (firstCheck) {
+                    if (!isConnected) {
+                        firstCheck = false;
+                    } else {
+                        return;
+                    }
+                }
+
+                if (isConnected) {
+                    Toast.makeText(context, "📶 Connexion rétablie", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(context, "❌ Connexion perdue, les données ne seront plus mis à jour", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+}

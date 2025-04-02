@@ -1,12 +1,18 @@
 package com.example.cryptinfos;
 
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,36 +34,66 @@ public class HomeActivity extends AppCompatActivity {
     MyRecyclerViewAdapter myAdapter;
     TextView tv;
     RecyclerView recycler;
+    List<Coin> coinList = new ArrayList<>();
+    NetworkReceiver networkReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        List<Coin> coins = new ArrayList<>();
         recycler = findViewById(R.id.adapter);
         LinearLayoutManager lmn = new LinearLayoutManager(this);
         lmn.setOrientation(RecyclerView.VERTICAL);
         recycler.setLayoutManager(lmn);
-        myAdapter = new MyRecyclerViewAdapter(coins);
+        myAdapter = new MyRecyclerViewAdapter(this, coinList);
         recycler.setAdapter(myAdapter);
 
         tv = findViewById(R.id.tv);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        networkReceiver = new NetworkReceiver();
+
+        go();
     }
 
-    public void go(View view) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        /*
+        switch (item.getItemId()) {
+            case R.id.reset:
+                go();
+                return (true);
+        }
+         */
+        go();
+        return (true);
+    }
+
+    public void go() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                String data = getDataFromHTTP("https://openapiv1.coinstats.app/coins", "srkjExa1IBZMMoDmd5YTI4sWbLpce8KFavfrzjbKKvU=");
+                String data = getDataFromHTTP("https://openapiv1.coinstats.app/coins?limit=200", "srkjExa1IBZMMoDmd5YTI4sWbLpce8KFavfrzjbKKvU=");
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            List<Coin> coinList = decodeJSON(data);
-                            myAdapter = new MyRecyclerViewAdapter(coinList);
-                            recycler.setAdapter(myAdapter);
+                            List<Coin> coins = decodeJSON(data);
+                            coinList.clear();
+                            coinList.addAll(coins);
+                            myAdapter.notifyDataSetChanged();
                         } catch (Exception e) {
                             tv.setText("Erreur lors de la recup crypto");
                         }
@@ -107,7 +143,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public List<Coin> decodeJSON(String json) throws JSONException {
-        List<Coin> coinList = new ArrayList<>();
+        List<Coin> coins = new ArrayList<>();
 
         JSONObject jsonObject = new JSONObject(json);
         JSONArray coinsArray = jsonObject.getJSONArray("result");
@@ -115,18 +151,30 @@ public class HomeActivity extends AppCompatActivity {
         for (int i = 0; i < coinsArray.length(); i++) {
             JSONObject coinObject = coinsArray.getJSONObject(i);
 
-            String icon = coinObject.getString("icon");
+            String id = coinObject.getString("id");
             String name = coinObject.getString("name");
             String symbol = coinObject.getString("symbol");
-            int rank = coinObject.getInt("rank");
             double price = coinObject.getDouble("price");
+            String icon = coinObject.getString("icon");
 
             // Créer un objet Coin et l'ajouter à la liste
-            Coin coin = new Coin(name, symbol, icon, rank, price);
-            coinList.add(coin);
+            Coin coin = new Coin(id, name, symbol, icon, price);
+            coins.add(coin);
         }
 
-        return coinList;
+        return coins;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkReceiver, filter);
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        unregisterReceiver(networkReceiver);
+    }
 }

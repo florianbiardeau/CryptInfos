@@ -1,18 +1,36 @@
 package com.example.cryptinfos;
 
+import java.util.List;
+
 public class Coin {
+    private String id;
     private String name;
     private String symbol;
-    private String icon;
-    private int rank;
+    private String iconUrl;
     private double price;
+    private List<String> explorers = null;
 
-    public Coin(String name, String symbol, String icon, int rank, double price) {
+    // Utiliser par HomeActivity
+    public Coin(String id, String name, String symbol, String iconUrl, double price) {
+        this.id = id;
         this.name = name;
         this.symbol = symbol;
-        this.icon = icon;
-        this.rank = rank;
         this.price = price;
+        this.iconUrl = iconUrl;
+    }
+
+    // Utiliser par CryptoActivity
+    public Coin(String id, String name, String symbol, String iconUrl, double price, List<String> explorers) {
+        this.id = id;
+        this.name = name;
+        this.symbol = symbol;
+        this.price = price;
+        this.iconUrl = iconUrl;
+        this.explorers = explorers;
+    }
+
+    public String getId(){
+        return id;
     }
 
     public String getName() {
@@ -23,15 +41,15 @@ public class Coin {
         return symbol;
     }
 
-    public String getIcon() {
-        return icon;
-    }
-
-    public int getRank() {
-        return rank;
+    public String getIconUrl() {
+        return iconUrl;
     }
 
     public double getPrice() {
         return price;
+    }
+
+    public List<String> getExplorers() {
+        return explorers;
     }
 }
