@@ -73,7 +73,7 @@ public class CryptoActivity extends AppCompatActivity {
 
         explorerLinks = new ArrayList<>();
         crypto(id);
-        charts();
+        charts(id);
     }
 
     public void crypto(String id) {
@@ -208,11 +208,11 @@ public class CryptoActivity extends AppCompatActivity {
     }
 
 
-    public void charts(){
+    public void charts(String id){
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
-            String data = getDataFromHTTP("https://openapiv1.coinstats.app/coins/dogecoin/charts?period=all", "srkjExa1IBZMMoDmd5YTI4sWbLpce8KFavfrzjbKKvU=");
+            String data = getDataFromHTTP("https://openapiv1.coinstats.app/coins/" + id + "/charts?period=all", "srkjExa1IBZMMoDmd5YTI4sWbLpce8KFavfrzjbKKvU=");
             System.out.println(data);
             handler.post(() -> {
                 try {
