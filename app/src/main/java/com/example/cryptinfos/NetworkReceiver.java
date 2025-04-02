@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 public class NetworkReceiver extends BroadcastReceiver {
 
-    private static boolean firstCheck = true;
+    private boolean firstCheck = true;
 
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,6 +38,7 @@ public class CryptoActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ExplorerAdapter adapter;
     private List<String> explorerLinks;
+    private Toolbar toolbar;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
 
@@ -46,6 +48,9 @@ public class CryptoActivity extends AppCompatActivity {
         setContentView(R.layout.crypto_layout);
 
         cryptoInfo = findViewById(R.id.cryptoInfo);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         Intent i = getIntent();
         String id = i.getStringExtra("id");

@@ -55,6 +55,9 @@ public class HomeActivity extends AppCompatActivity {
 
         networkReceiver = new NetworkReceiver();
 
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkReceiver, filter);
+
         go();
     }
 
@@ -163,18 +166,5 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         return coins;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkReceiver, filter);
-    }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-        unregisterReceiver(networkReceiver);
     }
 }
