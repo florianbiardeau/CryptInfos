@@ -1,6 +1,7 @@
 package com.example.cryptinfos;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,6 +12,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,8 +31,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -40,6 +50,7 @@ public class CryptoActivity extends AppCompatActivity {
     private List<String> explorerLinks;
     private Toolbar toolbar;
 
+    private LineChart lineChart;
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
@@ -54,15 +65,18 @@ public class CryptoActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         String id = i.getStringExtra("id");
-        go(id);
+
+        lineChart = findViewById(R.id.lineChart);
 
         recyclerView = findViewById(R.id.recyclerViewExplorers);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         explorerLinks = new ArrayList<>();
+        crypto(id);
+        charts();
     }
 
-    public void go(String id) {
+    public void crypto(String id) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(new Runnable() {
@@ -146,6 +160,68 @@ public class CryptoActivity extends AppCompatActivity {
         } catch (Exception e) {
             return "Erreur de décodage JSON";
         }
+    }
+
+    private void updateChart(String json) {
+        try {
+            ArrayList<String> dates = new ArrayList<>(); // Stocker les dates en texte
+
+            JSONArray history = new JSONArray(json); // Pas besoin de JSONObject, c'est déjà un tableau
+
+            ArrayList<Entry> entries = new ArrayList<>();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+            for (int i = 0; i < history.length(); i++) {
+                JSONArray dataPoint = history.getJSONArray(i);
+                long timestamp = dataPoint.getLong(0) * 1000; // Convertir en millisecondes
+                float price = (float) dataPoint.getDouble(1);
+
+                entries.add(new Entry(i, price)); // L'index i est utilisé pour X
+                dates.add(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date(timestamp)));
+            }
+
+
+            if (entries.isEmpty()) {
+                cryptoInfo.setText("Aucune donnée pour le graphique");
+                return;
+            }
+
+            LineDataSet dataSet = new LineDataSet(entries, "Prix de la Crypto");
+            dataSet.setColor(Color.BLUE);
+            dataSet.setValueTextColor(Color.BLACK);
+            dataSet.setLineWidth(2f);
+
+            LineData lineData = new LineData(dataSet);
+            lineChart.setData(lineData);
+            lineChart.invalidate();
+
+            // Formatter pour afficher les dates sur l'axe X
+            XAxis xAxis = lineChart.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setGranularity(1f);
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(dates));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            cryptoInfo.setText("Erreur lors de la mise à jour du graphique");
+        }
+    }
+
+
+    public void charts(){
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            String data = getDataFromHTTP("https://openapiv1.coinstats.app/coins/dogecoin/charts?period=all", "srkjExa1IBZMMoDmd5YTI4sWbLpce8KFavfrzjbKKvU=");
+            System.out.println(data);
+            handler.post(() -> {
+                try {
+                    updateChart(data);
+                } catch (Exception e) {
+                    cryptoInfo.setText("Erreur lors de la recup crypto");
+                }
+            });
+        });
     }
 
     private void updateUI(String message) {
