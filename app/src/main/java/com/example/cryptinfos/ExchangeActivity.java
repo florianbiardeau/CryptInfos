@@ -12,12 +12,15 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,7 +47,7 @@ public class ExchangeActivity extends AppCompatActivity {
     private EditText edt1;
     private TextView edt2;
 
-    private Button btn;
+    private MaterialButton btn;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
 
