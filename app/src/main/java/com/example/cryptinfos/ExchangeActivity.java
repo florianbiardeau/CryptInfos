@@ -6,6 +6,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -65,8 +68,6 @@ public class ExchangeActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent i = getIntent();
-
         loadCoins();
 
         // Mise à jour de la conversion dès que le texte change
@@ -98,6 +99,20 @@ public class ExchangeActivity extends AppCompatActivity {
         };
         spinner1.setOnItemSelectedListener(selectionListener);
         spinner2.setOnItemSelectedListener(selectionListener);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        loadCoins();
+        return (true);
     }
 
     public void loadCoins() {

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
+    android:background="@color/background"
     tools:context=".ExchangeActivity">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <!-- Inclusion de la Toolbar dans le layout -->
+    <include layout="@layout/toolbar" />
 
     <LinearLayout
+        android:id="@+id/linear1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout1"
@@ -27,15 +27,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Crypto">
+            android:hint="Crypto"
+            android:textColorHint="@color/black">
 
             <AutoCompleteTextView
                 android:id="@+id/spinner1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
+                android:inputType="none"
+                android:textColor="@color/black"/>
         </com.google.android.material.textfield.TextInputLayout>
-
 
         <EditText
             android:id="@+id/editTextNumber1"
@@ -43,22 +44,29 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:hint="Nombre"
-            android:inputType="number" />
+            android:inputType="number"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"/>
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/switchButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="switchCrypto"
         app:icon="@drawable/fleche"
-        android:onClick="switchCrypto" />
+        app:layout_constraintTop_toBottomOf="@id/linear1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginBottom="8dp"
-        >
+        app:layout_constraintTop_toBottomOf="@id/switchButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout2"
@@ -66,15 +74,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Crypto">
+            android:hint="Crypto"
+            android:textColorHint="@color/black">
 
             <AutoCompleteTextView
                 android:id="@+id/spinner2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
+                android:inputType="none"
+                android:textColor="@color/black"/>
         </com.google.android.material.textfield.TextInputLayout>
-
 
         <TextView
             android:id="@+id/editTextNumber2"
@@ -82,9 +91,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:hint="Nombre"
-            android:inputType="number" />
+            android:inputType="number"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"/>
     </LinearLayout>
-
-
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
