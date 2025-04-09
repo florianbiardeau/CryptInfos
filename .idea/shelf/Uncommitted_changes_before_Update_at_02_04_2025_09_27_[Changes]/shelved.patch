@@ -1,0 +1,16 @@
+Index: app/src/main/res/layout/crypto_layout.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n<LinearLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:orientation=\"vertical\"\r\n    android:padding=\"16dp\"\r\n    tools:context=\".CryptoActivity\">\r\n\r\n    <include layout=\"@layout/toolbar\" />\r\n\r\n\r\n    <com.github.mikephil.charting.charts.LineChart\r\n        android:id=\"@+id/lineChart\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"300dp\"/>\r\n\r\n\r\n    <TextView\r\n        android:id=\"@+id/cryptoInfo\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"Informations de la crypto...\"\r\n        android:paddingTop=\"16dp\"\r\n        android:textSize=\"16sp\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/textLiens\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"Quelques liens utiles :\"\r\n        android:paddingTop=\"16dp\"\r\n        android:textSize=\"16sp\" />\r\n\r\n    <androidx.recyclerview.widget.RecyclerView\r\n        android:id=\"@+id/recyclerViewExplorers\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"244dp\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@id/tv\" />\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/crypto_layout.xml b/app/src/main/res/layout/crypto_layout.xml
+--- a/app/src/main/res/layout/crypto_layout.xml	(revision 7b709d117cbf33f191e67e7e81493975065fd5ad)
++++ b/app/src/main/res/layout/crypto_layout.xml	(date 1743578382706)
+@@ -1,5 +1,4 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ <LinearLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
