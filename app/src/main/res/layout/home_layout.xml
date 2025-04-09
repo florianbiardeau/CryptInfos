@@ -8,23 +8,29 @@
     android:background="@color/background"
     tools:context=".HomeActivity">
 
+    <!-- Inclusion de la Toolbar dans le layout -->
     <include layout="@layout/toolbar" />
 
-    <TextView
-        android:id="@+id/tv"
+    <Button
+        android:id="@+id/boutonExchangeActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/adapter"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:text="Convertisseur"
+        android:background="@color/white"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:onClick="changerActi"
+        >
+    </Button>
 
+    <!-- RecyclerView servant à l'affichage des cryptos dans l'activité HomeActivity -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/adapter"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/boutonExchangeActivity"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

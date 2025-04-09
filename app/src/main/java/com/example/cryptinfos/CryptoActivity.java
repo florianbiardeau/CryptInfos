@@ -5,11 +5,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.github.mikephil.charting.charts.LineChart;
@@ -23,7 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -39,18 +37,17 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Activité lancée lors du clique sur une crypto dans l'activité HomeActivity
+ */
 public class CryptoActivity extends AppCompatActivity {
 
-    private EditText cryptoInput;
-    private Button btnSearch;
-    private TextView cryptoInfo;
-
-    private RecyclerView recyclerView;
-    private ExplorerAdapter adapter;
-    private List<String> explorerLinks;
-    private Toolbar toolbar;
-
     private LineChart lineChart;
+    private TextView cryptoInfo;
+    private RecyclerView recyclerView;
+    private RecyclerViewAdapterCryptoActivity adapter;
+    private List<String> explorerLinks;
+    private String id;
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
@@ -64,7 +61,7 @@ public class CryptoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Intent i = getIntent();
-        String id = i.getStringExtra("id");
+        id = i.getStringExtra("id");
 
         lineChart = findViewById(R.id.lineChart);
 
@@ -72,11 +69,28 @@ public class CryptoActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         explorerLinks = new ArrayList<>();
-        crypto(id);
-        charts(id);
+        crypto();
+        charts();
     }
 
-    public void crypto(String id) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        crypto();
+        return (true);
+    }
+
+    /**
+     * Méthode appelé au démarrage de l'activité. Elle récupère les infos sur la crypto sélectionnée et les affiche
+     */
+    public void crypto() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(new Runnable() {
@@ -97,12 +111,37 @@ public class CryptoActivity extends AppCompatActivity {
         });
     }
 
-    public String getDataFromHTTP(String param, String apiKey) {
+    /**
+     * Méthode appelé au démarrage de l'activité. Elle récupère les prix de la crypto sélectionnée et les affiche
+     */
+    public void charts(){
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            String data = getDataFromHTTP("https://openapiv1.coinstats.app/coins/" + id + "/charts?period=all", "srkjExa1IBZMMoDmd5YTI4sWbLpce8KFavfrzjbKKvU=");
+            System.out.println(data);
+            handler.post(() -> {
+                try {
+                    updateChart(data);
+                } catch (Exception e) {
+                    cryptoInfo.setText("Erreur lors de la recup crypto");
+                }
+            });
+        });
+    }
+
+    /**
+     * Récupère le JSON fourni par l'API https://openapi.coinstats.app/ selon la requete
+     * @param requete Requête a envoyer à l'API
+     * @param apiKey Clé API privé pour faire la requête
+     * @return Retourne le JSON retourné par l'API
+     */
+    public String getDataFromHTTP(String requete, String apiKey) {
         StringBuilder result = new StringBuilder();
         HttpURLConnection connexion = null;
         try {
             // Création de l'URL
-            URL url = new URL(param);
+            URL url = new URL(requete);
             connexion = (HttpURLConnection) url.openConnection();
 
             // Définition de la méthode GET
@@ -136,12 +175,17 @@ public class CryptoActivity extends AppCompatActivity {
         return result.toString();
     }
 
+    /**
+     * Décode le JSON renvoyé par l'API
+     * @param json JSON a décodé
+     * @return Retourne une String contenant le nom, le symbol, et le prix de la crypto
+     */
     public String decodeJson(String json){
         try {
             JSONObject obj = new JSONObject(json);
 
             String nom = obj.getString("name");
-            String acronyme = obj.getString("symbol");
+            String symbol = obj.getString("symbol");
             String prix = obj.getString("price");
 
             JSONArray explorersArray = obj.getJSONArray("explorers");
@@ -150,18 +194,21 @@ public class CryptoActivity extends AppCompatActivity {
                 explorerLinks.add(explorersArray.getString(i));
             }
 
-            adapter = new ExplorerAdapter(this, explorerLinks);
+            adapter = new RecyclerViewAdapterCryptoActivity(this, explorerLinks);
             recyclerView.setAdapter(adapter);
 
-            return "nom : " + nom
-                    + "\nacronyme : " + acronyme
-                    + "\nprix : $" + prix;
+            return "Nom : " + nom + " (" + symbol + ")"
+                    + "\nPrix : $" + prix;
 
         } catch (Exception e) {
             return "Erreur de décodage JSON";
         }
     }
 
+    /**
+     * Mets à jour le graphique avec les prix de la crypto
+     * @param json JSON contenant les prix de la crypto
+     */
     private void updateChart(String json) {
         try {
             ArrayList<String> dates = new ArrayList<>(); // Stocker les dates en texte
@@ -205,26 +252,5 @@ public class CryptoActivity extends AppCompatActivity {
             e.printStackTrace();
             cryptoInfo.setText("Erreur lors de la mise à jour du graphique");
         }
-    }
-
-
-    public void charts(String id){
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(() -> {
-            String data = getDataFromHTTP("https://openapiv1.coinstats.app/coins/" + id + "/charts?period=all", "srkjExa1IBZMMoDmd5YTI4sWbLpce8KFavfrzjbKKvU=");
-            System.out.println(data);
-            handler.post(() -> {
-                try {
-                    updateChart(data);
-                } catch (Exception e) {
-                    cryptoInfo.setText("Erreur lors de la recup crypto");
-                }
-            });
-        });
-    }
-
-    private void updateUI(String message) {
-        handler.post(() -> cryptoInfo.setText(message));
     }
 }

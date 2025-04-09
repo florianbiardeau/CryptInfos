@@ -7,11 +7,11 @@
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     android:padding="16dp"
-    android:background="@drawable/item_background"
+    android:background="@drawable/item_background_home_activity"
     android:layout_marginVertical="8dp"
     android:elevation="2dp">
 
-    <!-- Image icon with rounded corner -->
+    <!-- Icon de la crypto -->
     <ImageView
         android:id="@+id/coinIcon"
         android:layout_width="48dp"
@@ -19,9 +19,9 @@
         android:layout_marginEnd="16dp"
         android:layout_gravity="center_vertical"
         android:scaleType="centerCrop"
-        android:background="@drawable/item_background"/>
+        android:background="@drawable/item_background_home_activity"/>
 
-    <!-- Vertical container for text -->
+    <!-- LinearLayout verticale affichant le nom, le symbole, et le prix de la crypto-->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="0dp"
@@ -29,7 +29,7 @@
         android:layout_weight="1"
         android:gravity="center_vertical">
 
-        <!-- Coin Name -->
+        <!-- Nom de la crypto -->
         <TextView
             android:id="@+id/coinName"
             android:layout_width="wrap_content"
@@ -41,7 +41,7 @@
             android:ellipsize="end"
             android:maxLines="1"/>
 
-        <!-- Coin Symbol -->
+        <!-- Symbole de la crypto -->
         <TextView
             android:id="@+id/coinSymbol"
             android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
             android:textSize="14sp"
             android:layout_marginTop="4dp"/>
 
-        <!-- Coin Price -->
+        <!-- Prix de la crypto -->
         <TextView
             android:id="@+id/coinPrice"
             android:layout_width="wrap_content"

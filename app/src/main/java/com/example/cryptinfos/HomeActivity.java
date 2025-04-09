@@ -1,5 +1,6 @@
 package com.example.cryptinfos;
 
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -9,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -30,30 +31,33 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Activité lancée au démarrage de l'application
+ */
 public class HomeActivity extends AppCompatActivity {
-    MyRecyclerViewAdapter myAdapter;
-    TextView tv;
+    RecyclerViewAdapterHomeActivity myAdapter;
     RecyclerView recycler;
-    List<Coin> coinList = new ArrayList<>();
+    List<CoinObject> coinList = new ArrayList<>();
     NetworkReceiver networkReceiver;
+    Button btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.home_layout);
         recycler = findViewById(R.id.adapter);
         LinearLayoutManager lmn = new LinearLayoutManager(this);
         lmn.setOrientation(RecyclerView.VERTICAL);
         recycler.setLayoutManager(lmn);
-        myAdapter = new MyRecyclerViewAdapter(this, coinList);
+        myAdapter = new RecyclerViewAdapterHomeActivity(this, coinList);
         recycler.setAdapter(myAdapter);
-
-        tv = findViewById(R.id.tv);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         networkReceiver = new NetworkReceiver();
+
+        btn = findViewById(R.id.boutonExchangeActivity);
 
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkReceiver, filter);
@@ -71,17 +75,13 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        /*
-        switch (item.getItemId()) {
-            case R.id.reset:
-                go();
-                return (true);
-        }
-         */
         go();
         return (true);
     }
 
+    /**
+     * Méthode appelé au démarrage de l'activité. Elle récupère les 200 premières cryptos et les affiche
+     */
     public void go() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -93,12 +93,12 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            List<Coin> coins = decodeJSON(data);
+                            List<CoinObject> coins = decodeJSON(data);
                             coinList.clear();
                             coinList.addAll(coins);
                             myAdapter.notifyDataSetChanged();
                         } catch (Exception e) {
-                            tv.setText("Erreur lors de la recup crypto");
+                            // tv.setText("Erreur lors de la recup crypto");
                         }
                     }
                 });
@@ -106,12 +106,19 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    public String getDataFromHTTP(String param, String apiKey) {
+    /**
+     * Récupère le JSON fourni par l'API https://openapi.coinstats.app/ selon la requete
+     *
+     * @param requete Requête a envoyer à l'API
+     * @param apiKey  Clé API privé pour faire la requête
+     * @return Retourne le JSON retourné par l'API
+     */
+    public String getDataFromHTTP(String requete, String apiKey) {
         StringBuilder result = new StringBuilder();
         HttpURLConnection connexion = null;
         try {
             // Création de l'URL
-            URL url = new URL(param);
+            URL url = new URL(requete);
             connexion = (HttpURLConnection) url.openConnection();
 
             // Définition de la méthode GET
@@ -145,8 +152,14 @@ public class HomeActivity extends AppCompatActivity {
         return result.toString();
     }
 
-    public List<Coin> decodeJSON(String json) throws JSONException {
-        List<Coin> coins = new ArrayList<>();
+    /**
+     * Décode le JSON renvoyé par l'API
+     *
+     * @param json JSON a décodé
+     * @return Retourne une List de Coin
+     */
+    public List<CoinObject> decodeJSON(String json) throws JSONException {
+        List<CoinObject> coins = new ArrayList<>();
 
         JSONObject jsonObject = new JSONObject(json);
         JSONArray coinsArray = jsonObject.getJSONArray("result");
@@ -161,10 +174,16 @@ public class HomeActivity extends AppCompatActivity {
             String icon = coinObject.getString("icon");
 
             // Créer un objet Coin et l'ajouter à la liste
-            Coin coin = new Coin(id, name, symbol, icon, price);
+            CoinObject coin = new CoinObject(id, name, symbol, icon, price);
             coins.add(coin);
         }
 
         return coins;
     }
+
+    public void changerActi(View view) {
+        Intent intent = new Intent(this, ExchangeActivity.class);
+        this.startActivity(intent);
+    }
+
 }

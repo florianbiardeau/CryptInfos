@@ -7,7 +7,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
 
-
+/**
+ * NetworkReceiver est BroadcastReceiver un qui permet de détecter les changements de connectivité réseau sur l'appareil.
+ * Il affiche un message à l'utilisateur lorsque la connexion est perdue ou rétablie.
+ * Pour éviter une alerte lors du premier démarrage, il utilise un indicateur firstCheck.
+ */
 public class NetworkReceiver extends BroadcastReceiver {
 
     private boolean firstCheck = true;

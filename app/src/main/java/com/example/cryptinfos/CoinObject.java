@@ -2,7 +2,10 @@ package com.example.cryptinfos;
 
 import java.util.List;
 
-public class Coin {
+/**
+ * Classe stockant les données d'une crypto pour pouvoir les afficher
+ */
+public class CoinObject {
     private String id;
     private String name;
     private String symbol;
@@ -10,8 +13,16 @@ public class Coin {
     private double price;
     private List<String> explorers = null;
 
-    // Utiliser par HomeActivity
-    public Coin(String id, String name, String symbol, String iconUrl, double price) {
+
+    /**
+     * Constructeur utilisé par HomeActivity
+     * @param id Id de la crypto
+     * @param name Nom de la crypto
+     * @param symbol Symbole de la crypto
+     * @param iconUrl Url de l'icon de la crypto
+     * @param price Prix de la crypto
+     */
+    public CoinObject(String id, String name, String symbol, String iconUrl, double price) {
         this.id = id;
         this.name = name;
         this.symbol = symbol;
@@ -19,8 +30,16 @@ public class Coin {
         this.iconUrl = iconUrl;
     }
 
-    // Utiliser par CryptoActivity
-    public Coin(String id, String name, String symbol, String iconUrl, double price, List<String> explorers) {
+    /**
+     * Constructeur utilisé par CryptoActivity
+     * @param id Id de la crypto
+     * @param name Nom de la crypto
+     * @param symbol Symbole de la crypto
+     * @param iconUrl Url de l'icon de la crypto
+     * @param price Prix de la crypto
+     * @param explorers Liste des url de la crypto
+     */
+    public CoinObject(String id, String name, String symbol, String iconUrl, double price, List<String> explorers) {
         this.id = id;
         this.name = name;
         this.symbol = symbol;
