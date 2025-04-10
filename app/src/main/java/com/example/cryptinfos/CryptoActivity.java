@@ -83,8 +83,17 @@ public class CryptoActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        crypto();
-        return (true);
+        int id = item.getItemId();
+        if (id == R.id.home) {
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            return true;
+        } else if (id == R.id.reload) {
+            crypto();
+            return true;
+        }
+        return true;
     }
 
     /**

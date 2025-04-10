@@ -13,10 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,14 +39,16 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ExchangeActivity extends AppCompatActivity {
+/**
+ * Activité lancée lors du clique sur le bouton "Aller au convertisseur"
+ */
+public class ConvertActivity extends AppCompatActivity {
 
     private Map<String, Double> coinsMap;
     private AutoCompleteTextView spinner1;
     private AutoCompleteTextView spinner2;
     private EditText edt1;
     private TextView edt2;
-
     private MaterialButton btn;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -57,7 +56,7 @@ public class ExchangeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.exchange_layout);
+        setContentView(R.layout.convert_layout);
 
         spinner1 = findViewById(R.id.spinner1);
         spinner2 = findViewById(R.id.spinner2);
@@ -111,10 +110,22 @@ public class ExchangeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        loadCoins();
-        return (true);
+        int id = item.getItemId();
+        if (id == R.id.home) {
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            return true;
+        } else if (id == R.id.reload) {
+            loadCoins();
+            return true;
+        }
+        return true;
     }
 
+    /**
+     * Méthode appelé au démarrage de l'activité. Elle récupère la liste des cryptos ainsi que leur prix
+     */
     public void loadCoins() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -135,13 +146,13 @@ public class ExchangeActivity extends AppCompatActivity {
                             List<String> coinNames = new ArrayList<>(coinsMap.keySet());
                             Collections.sort(coinNames);
                             // Création d'un ArrayAdapter pour alimenter les spinners
-                            ArrayAdapter<String> adapter = new ArrayAdapter<>(ExchangeActivity.this,
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(ConvertActivity.this,
                                     android.R.layout.simple_spinner_item, coinNames);
                             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinner1.setAdapter(adapter);
                             spinner2.setAdapter(adapter);
                         } catch (Exception e) {
-                            Toast.makeText(ExchangeActivity.this, "Erreur lors du chargement des coins", Toast.LENGTH_LONG).show();
+                            Toast.makeText(ConvertActivity.this, "Erreur lors du chargement des coins", Toast.LENGTH_LONG).show();
                             e.printStackTrace();
                         }
                     }
@@ -150,30 +161,19 @@ public class ExchangeActivity extends AppCompatActivity {
         });
     }
 
-
-    public Map<String, Double> decodeJsonForCoinNames(String json) {
-        Map<String, Double> coinMap = new HashMap<>();
-        try {
-            JSONObject obj = new JSONObject(json);
-            JSONArray resultArray = obj.getJSONArray("result");
-            for (int i = 0; i < resultArray.length(); i++) {
-                JSONObject coinObj = resultArray.getJSONObject(i);
-                String coinName = coinObj.getString("name");
-                double price = coinObj.getDouble("price");
-                coinMap.put(coinName, price);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return coinMap;
-    }
-
-    public String getDataFromHTTP(String param, String apiKey) {
+    /**
+     * Récupère le JSON fourni par l'API https://openapi.coinstats.app/ selon la requete
+     *
+     * @param requete Requête a envoyer à l'API
+     * @param apiKey  Clé API privé pour faire la requête
+     * @return Retourne le JSON retourné par l'API
+     */
+    public String getDataFromHTTP(String requete, String apiKey) {
         StringBuilder result = new StringBuilder();
         HttpURLConnection connexion = null;
         try {
             // Création de l'URL
-            URL url = new URL(param);
+            URL url = new URL(requete);
             connexion = (HttpURLConnection) url.openConnection();
 
             // Définition de la méthode GET
@@ -208,6 +208,29 @@ public class ExchangeActivity extends AppCompatActivity {
     }
 
     /**
+     * Décode le JSON renvoyé par l'API
+     *
+     * @param json JSON a décodé
+     * @return Retourne une List de Coin
+     */
+    public Map<String, Double> decodeJsonForCoinNames(String json) {
+        Map<String, Double> coinMap = new HashMap<>();
+        try {
+            JSONObject obj = new JSONObject(json);
+            JSONArray resultArray = obj.getJSONArray("result");
+            for (int i = 0; i < resultArray.length(); i++) {
+                JSONObject coinObj = resultArray.getJSONObject(i);
+                String coinName = coinObj.getString("name");
+                double price = coinObj.getDouble("price");
+                coinMap.put(coinName, price);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return coinMap;
+    }
+
+    /**
      * Convertit le montant saisi (en unité de la première crypto) en l'équivalent dans la deuxième crypto.
      * La conversion se fait en multipliant le montant par le prix de la première crypto puis en le divisant par le prix de la deuxième crypto.
      */
@@ -234,7 +257,11 @@ public class ExchangeActivity extends AppCompatActivity {
         }
     }
 
-    public void switchCrypto(View v) {
+    /**
+     * Méthode appelé lors du clique sur le bouton switch. Inverse les deux cryptos dans les inputs.
+     * @param view
+     */
+    public void switchCrypto(View view) {
         String coin1 = spinner1.getText().toString();
         String coin2 = spinner2.getText().toString();
 

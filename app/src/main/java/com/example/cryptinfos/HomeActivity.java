@@ -75,8 +75,14 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        go();
-        return (true);
+        int id = item.getItemId();
+        if (id == R.id.home) {
+            return true;
+        } else if (id == R.id.reload) {
+            go();
+            return true;
+        }
+        return true;
     }
 
     /**
@@ -181,8 +187,12 @@ public class HomeActivity extends AppCompatActivity {
         return coins;
     }
 
+    /**
+     * Méthode appelé lors du clique le bouton, pour aller à la page de conversion
+     * @param view
+     */
     public void changerActi(View view) {
-        Intent intent = new Intent(this, ExchangeActivity.class);
+        Intent intent = new Intent(this, ConvertActivity.class);
         this.startActivity(intent);
     }
 
