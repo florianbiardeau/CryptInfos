@@ -11,7 +11,11 @@ public class CoinObject {
     private String symbol;
     private String iconUrl;
     private double price;
-    private List<String> explorers = null;
+    private int rank;
+    private double volume;
+    private double marketCap;
+    private int availableSupply;
+    private int totalSupply;
 
 
     /**
@@ -37,15 +41,23 @@ public class CoinObject {
      * @param symbol Symbole de la crypto
      * @param iconUrl Url de l'icon de la crypto
      * @param price Prix de la crypto
-     * @param explorers Liste des url de la crypto
+     * @param rank Rang de la crypto
+     * @param volume Volume de la crypto
+     * @param marketCap Market Cap de la crypto
+     * @param availableSupply Supply disponible de la crypto
+     * @param totalSupply Supply totale de la crypto
      */
-    public CoinObject(String id, String name, String symbol, String iconUrl, double price, List<String> explorers) {
+    public CoinObject(String id, String name, String symbol, String iconUrl, double price, int rank, double volume, double marketCap, int availableSupply, int totalSupply) {
         this.id = id;
         this.name = name;
         this.symbol = symbol;
         this.price = price;
         this.iconUrl = iconUrl;
-        this.explorers = explorers;
+        this.rank = rank;
+        this.volume = volume;
+        this.marketCap = marketCap;
+        this.availableSupply = availableSupply;
+        this.totalSupply = totalSupply;
     }
 
     public String getId(){
@@ -68,7 +80,24 @@ public class CoinObject {
         return price;
     }
 
-    public List<String> getExplorers() {
-        return explorers;
+    public int getRank() {
+        return rank;
     }
+
+    public double getVolume() {
+        return volume;
+    }
+
+    public double getMarketCap() {
+        return marketCap;
+    }
+
+    public int getAvailableSupply() {
+        return availableSupply;
+    }
+
+    public int getTotalSupply() {
+        return totalSupply;
+    }
+
 }

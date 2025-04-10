@@ -2,10 +2,13 @@ package com.example.cryptinfos;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
@@ -21,6 +24,7 @@ public class RecyclerViewAdapterCryptoActivity extends RecyclerView.Adapter<Elem
     public RecyclerViewAdapterCryptoActivity(Context context, List<String> liens) {
         this.context = context;
         this.liens = liens;
+        System.out.println("lienssss " +liens);
     }
 
     public ElementViewHolderCryptoActivity onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -31,10 +35,12 @@ public class RecyclerViewAdapterCryptoActivity extends RecyclerView.Adapter<Elem
     @Override
     public void onBindViewHolder(ElementViewHolderCryptoActivity holder, int position) {
         String url = liens.get(position);
-        holder.lienTextView.setText(url);
+        TextView lien = holder.lienTextView;
+        lien.setText(url);
 
         // Rendre chaque item cliquable pour ouvrir le lien
-        holder.lienTextView.setOnClickListener(v -> {
+        lien.setPaintFlags(lien.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        lien.setOnClickListener(v -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             context.startActivity(browserIntent);
         });

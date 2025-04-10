@@ -8,9 +8,12 @@ import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -43,10 +46,18 @@ import java.util.concurrent.Executors;
 public class CryptoActivity extends AppCompatActivity {
 
     private LineChart lineChart;
-    private TextView cryptoInfo;
+    private ImageView iconCrypto;
+    private TextView nomCrypto;
+    private TextView rangCrypto;
+    private TextView prixCrypto;
+    private TextView volumeCrypto;
+    private TextView marketCapCrypto;
+    private TextView supplyDispoCrypto;
+    private TextView supplyTotaleCrypto;
+
+
     private RecyclerView recyclerView;
     private RecyclerViewAdapterCryptoActivity adapter;
-    private List<String> explorerLinks;
     private String id;
     private final Handler handler = new Handler(Looper.getMainLooper());
 
@@ -55,7 +66,14 @@ public class CryptoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.crypto_layout);
 
-        cryptoInfo = findViewById(R.id.cryptoInfo);
+        iconCrypto = findViewById(R.id.iconCrypto);
+        nomCrypto = findViewById(R.id.nomCrypto);
+        rangCrypto = findViewById(R.id.rangCrypto);
+        prixCrypto = findViewById(R.id.prixCrypto);
+        volumeCrypto = findViewById(R.id.volumeCrypto);
+        marketCapCrypto = findViewById(R.id.marketCapCrypto);
+        supplyDispoCrypto = findViewById(R.id.supplyDispoCrypto);
+        supplyTotaleCrypto = findViewById(R.id.supplyTotaleCrypto);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,7 +86,6 @@ public class CryptoActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewExplorers);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        explorerLinks = new ArrayList<>();
         crypto();
         charts();
     }
@@ -102,6 +119,7 @@ public class CryptoActivity extends AppCompatActivity {
     public void crypto() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
+        CryptoActivity context = this;
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -110,9 +128,19 @@ public class CryptoActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            cryptoInfo.setText(decodeJson(data));
+                            CoinObject coin = decodeJson(data);
+                            Glide.with(context)
+                                    .load(coin.getIconUrl())
+                                    .into(iconCrypto);
+                            nomCrypto.setText("Nom : " + coin.getName() + " (" + coin.getSymbol() + ")");
+                            rangCrypto.setText("Rang : " + coin.getRank());
+                            prixCrypto.setText("Prix : " + coin.getPrice());
+                            volumeCrypto.setText("Volume : " + coin.getVolume());
+                            marketCapCrypto.setText("Market Cap  : " + coin.getMarketCap());
+                            supplyDispoCrypto.setText("Supply disponible : " + coin.getAvailableSupply());
+                            supplyTotaleCrypto.setText("Supply totale : " + coin.getTotalSupply());
                         } catch (Exception e) {
-                            cryptoInfo.setText("Erreur lors de la recup crypto");
+                            throw e; // A CHANGER
                         }
                     }
                 });
@@ -128,12 +156,11 @@ public class CryptoActivity extends AppCompatActivity {
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
             String data = getDataFromHTTP("https://openapiv1.coinstats.app/coins/" + id + "/charts?period=all", "srkjExa1IBZMMoDmd5YTI4sWbLpce8KFavfrzjbKKvU=");
-            System.out.println(data);
             handler.post(() -> {
                 try {
                     updateChart(data);
                 } catch (Exception e) {
-                    cryptoInfo.setText("Erreur lors de la recup crypto");
+                    throw e; // A CHANGER
                 }
             });
         });
@@ -187,18 +214,25 @@ public class CryptoActivity extends AppCompatActivity {
     /**
      * Décode le JSON renvoyé par l'API
      * @param json JSON a décodé
-     * @return Retourne une String contenant le nom, le symbol, et le prix de la crypto
+     * @return Retourne un CoinObject contenant toutes les informations de la crypto
      */
-    public String decodeJson(String json){
+    public CoinObject decodeJson(String json){
         try {
             JSONObject obj = new JSONObject(json);
 
             String nom = obj.getString("name");
-            String symbol = obj.getString("symbol");
-            String prix = obj.getString("price");
+            String iconUrl = obj.getString("icon");
+            String symbole = obj.getString("symbol");
+            int rang = obj.getInt("rank");
+            double prix = obj.getDouble("price");
+            double volume = obj.getDouble("volume");
+            double marketCap = obj.getDouble("marketCap");
+            int supplyDispo = obj.getInt("availableSupply");
+            int supplyTotale = obj.getInt("totalSupply");
 
             JSONArray explorersArray = obj.getJSONArray("explorers");
 
+            List<String> explorerLinks = new ArrayList<>();
             for (int i = 0; i < explorersArray.length(); i++) {
                 explorerLinks.add(explorersArray.getString(i));
             }
@@ -206,11 +240,10 @@ public class CryptoActivity extends AppCompatActivity {
             adapter = new RecyclerViewAdapterCryptoActivity(this, explorerLinks);
             recyclerView.setAdapter(adapter);
 
-            return "Nom : " + nom + " (" + symbol + ")"
-                    + "\nPrix : $" + prix;
+            return new CoinObject(id, nom, symbole, iconUrl, prix, rang, volume, marketCap, supplyDispo, supplyTotale);
 
         } catch (Exception e) {
-            return "Erreur de décodage JSON";
+            return null; // A CHANGER
         }
     }
 
@@ -238,7 +271,7 @@ public class CryptoActivity extends AppCompatActivity {
 
 
             if (entries.isEmpty()) {
-                cryptoInfo.setText("Aucune donnée pour le graphique");
+                // cryptoInfo.setText("Aucune donnée pour le graphique");
                 return;
             }
 
@@ -259,7 +292,7 @@ public class CryptoActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            cryptoInfo.setText("Erreur lors de la mise à jour du graphique");
+            // cryptoInfo.setText("Erreur lors de la mise à jour du graphique");
         }
     }
 }

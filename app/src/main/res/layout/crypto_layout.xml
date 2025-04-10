@@ -1,67 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:background="@color/background"
     tools:context=".CryptoActivity">
 
-    <!-- Inclusion de la Toolbar dans le layout -->
-    <include layout="@layout/toolbar" />
-
-    <!-- Graphique des prix de la crypto -->
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/lineChart"
-        android:layout_width="0dp"
-        android:layout_height="300dp"
-        android:layout_margin="16dp"
-        android:background="@drawable/item_background_crypto_activity"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Infos sur la crypto -->
-    <TextView
-        android:id="@+id/cryptoInfo"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:padding="12dp"
-        android:text="Informations de la crypto..."
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:background="@drawable/item_background_crypto_activity"
-        app:layout_constraintTop_toBottomOf="@id/lineChart"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:background="@color/background"
+        tools:context=".CryptoActivity">
 
-    <!-- Titre de la section Lien -->
-    <TextView
-        android:id="@+id/textLiens"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="16dp"
-        android:text="🔗 Liens utiles"
-        android:textColor="@color/primary"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/cryptoInfo"
-        app:layout_constraintStart_toStartOf="parent" />
+        <!-- Inclusion de la Toolbar dans le layout -->
+        <include layout="@layout/toolbar" />
 
-    <!-- RecyclerView servant à l'affichage des liens liés à la crypto courante dans l'activité CryptoActivity -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewExplorers"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="16dp"
-        app:layout_constraintTop_toBottomOf="@id/textLiens"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <!-- Icon de la crypto -->
+        <ImageView
+            android:id="@+id/iconCrypto"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Graphique des prix de la crypto -->
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lineChart"
+            android:layout_width="0dp"
+            android:layout_height="300dp"
+            android:layout_margin="16dp"
+            android:background="@drawable/item_background_crypto_activity"
+            app:layout_constraintTop_toBottomOf="@id/iconCrypto"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Nom de la crypto -->
+        <TextView
+            android:id="@+id/nomCrypto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:background="@drawable/item_background_crypto_activity"
+            app:layout_constraintTop_toBottomOf="@id/lineChart"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Rang de la crypto -->
+        <TextView
+            android:id="@+id/rangCrypto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:background="@drawable/item_background_crypto_activity"
+            app:layout_constraintTop_toBottomOf="@id/nomCrypto"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Prix de la crypto -->
+        <TextView
+            android:id="@+id/prixCrypto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:background="@drawable/item_background_crypto_activity"
+            app:layout_constraintTop_toBottomOf="@id/rangCrypto"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Volume de la crypto -->
+        <TextView
+            android:id="@+id/volumeCrypto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:background="@drawable/item_background_crypto_activity"
+            app:layout_constraintTop_toBottomOf="@id/prixCrypto"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- MarketCap de la crypto -->
+        <TextView
+            android:id="@+id/marketCapCrypto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:background="@drawable/item_background_crypto_activity"
+            app:layout_constraintTop_toBottomOf="@id/volumeCrypto"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Supply dispo de la crypto -->
+        <TextView
+            android:id="@+id/supplyDispoCrypto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:background="@drawable/item_background_crypto_activity"
+            app:layout_constraintTop_toBottomOf="@id/marketCapCrypto"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Supply totale de la crypto -->
+        <TextView
+            android:id="@+id/supplyTotaleCrypto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:background="@drawable/item_background_crypto_activity"
+            app:layout_constraintTop_toBottomOf="@id/supplyDispoCrypto"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+
+        <!-- Titre de la section Lien -->
+        <TextView
+            android:id="@+id/textLiens"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="16dp"
+            android:text="🔗 Liens utiles"
+            android:textColor="@color/primary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/supplyTotaleCrypto"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- RecyclerView servant à l'affichage des liens liés à la crypto courante dans l'activité CryptoActivity -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewExplorers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:layout_constraintTop_toBottomOf="@id/textLiens"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

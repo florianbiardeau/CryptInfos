@@ -1,6 +1,8 @@
 package com.example.cryptinfos;
 
 import android.content.Intent;
+import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -50,6 +52,7 @@ public class ConvertActivity extends AppCompatActivity {
     private EditText edt1;
     private TextView edt2;
     private MaterialButton btn;
+    private TextView lienAide;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
 
@@ -63,6 +66,13 @@ public class ConvertActivity extends AppCompatActivity {
         edt1 = findViewById(R.id.editTextNumber1);
         edt2 = findViewById(R.id.editTextNumber2);
         btn = findViewById(R.id.switchButton);
+
+        lienAide = findViewById(R.id.lienAcheterCrytpo);
+        lienAide.setPaintFlags(lienAide.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        lienAide.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.journaldugeek.com/crypto/acheter/"));
+            v.getContext().startActivity(browserIntent);
+        });
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
