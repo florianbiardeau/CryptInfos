@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -59,13 +60,13 @@ public class CryptoActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerViewAdapterCryptoActivity adapter;
     private String id;
-    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.crypto_layout);
 
+        // Récupération des éléments de la page
         iconCrypto = findViewById(R.id.iconCrypto);
         nomCrypto = findViewById(R.id.nomCrypto);
         rangCrypto = findViewById(R.id.rangCrypto);
@@ -74,18 +75,19 @@ public class CryptoActivity extends AppCompatActivity {
         marketCapCrypto = findViewById(R.id.marketCapCrypto);
         supplyDispoCrypto = findViewById(R.id.supplyDispoCrypto);
         supplyTotaleCrypto = findViewById(R.id.supplyTotaleCrypto);
+        lineChart = findViewById(R.id.lineChart);
+        recyclerView = findViewById(R.id.recyclerViewExplorers);
 
+        // Partie sur le RecyclerView contenant les cryptos
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Récupération de la ToolBar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Récupération de l'ID de la crypto depuis l'intent
         Intent i = getIntent();
         id = i.getStringExtra("id");
-
-        // Initialisation du graphique et de la RecyclerView
-        lineChart = findViewById(R.id.lineChart);
-        recyclerView = findViewById(R.id.recyclerViewExplorers);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Chargement des données de la crypto et du graphique
         crypto();
@@ -142,7 +144,7 @@ public class CryptoActivity extends AppCompatActivity {
                             supplyDispoCrypto.setText("Supply disponible : " + coin.getAvailableSupply());
                             supplyTotaleCrypto.setText("Supply totale : " + coin.getTotalSupply());
                         } catch (Exception e) {
-                            throw e; // A CHANGER
+                            Toast.makeText(CryptoActivity.this, "Erreur lors du chargement de la crypto", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -162,7 +164,7 @@ public class CryptoActivity extends AppCompatActivity {
                 try {
                     updateChart(data);
                 } catch (Exception e) {
-                    throw e; // A CHANGER
+                    Toast.makeText(CryptoActivity.this, "Erreur lors du chargement du graphique", Toast.LENGTH_LONG).show();
                 }
             });
         });
@@ -206,9 +208,7 @@ public class CryptoActivity extends AppCompatActivity {
             // Déconnexion de la connexion
             connexion.disconnect();
         } catch (Exception e) {
-            // En cas d'erreur, renvoie un message d'erreur
-            result = new StringBuilder("Erreur lors de la récupération des données");
-            e.printStackTrace();
+            Toast.makeText(CryptoActivity.this, "Erreur lors de la récupération des données", Toast.LENGTH_LONG).show();
         }
         return result.toString();
     }
@@ -245,7 +245,8 @@ public class CryptoActivity extends AppCompatActivity {
             return new CoinObject(id, nom, symbole, iconUrl, prix, rang, volume, marketCap, supplyDispo, supplyTotale);
 
         } catch (Exception e) {
-            return null; // A CHANGER
+            Toast.makeText(CryptoActivity.this, "Erreur lors du décodage du JSON", Toast.LENGTH_LONG).show();
+            return null;
         }
     }
 
@@ -273,7 +274,7 @@ public class CryptoActivity extends AppCompatActivity {
 
 
             if (entries.isEmpty()) {
-                // cryptoInfo.setText("Aucune donnée pour le graphique");
+                Toast.makeText(CryptoActivity.this, "Aucune donnée pour le graphique", Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -293,8 +294,7 @@ public class CryptoActivity extends AppCompatActivity {
             xAxis.setValueFormatter(new IndexAxisValueFormatter(dates));
 
         } catch (Exception e) {
-            e.printStackTrace();
-            // cryptoInfo.setText("Erreur lors de la mise à jour du graphique");
+            Toast.makeText(CryptoActivity.this, "Erreur lors de la mise à jour du graphique", Toast.LENGTH_LONG).show();
         }
     }
 }

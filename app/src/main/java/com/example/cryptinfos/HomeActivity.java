@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -45,23 +46,28 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_layout);
+
+        // Récupération des éléments de la page
         recycler = findViewById(R.id.adapter);
+        btn = findViewById(R.id.boutonExchangeActivity);
+
+        // Partie sur le RecyclerView contenant les cryptos
         LinearLayoutManager lmn = new LinearLayoutManager(this);
         lmn.setOrientation(RecyclerView.VERTICAL);
         recycler.setLayoutManager(lmn);
         myAdapter = new RecyclerViewAdapterHomeActivity(this, coinList);
         recycler.setAdapter(myAdapter);
 
+        // Récupération de la ToolBar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Instanciation du BroadcastReceiver
         networkReceiver = new NetworkReceiver();
-
-        btn = findViewById(R.id.boutonExchangeActivity);
-
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkReceiver, filter);
 
+        // Chargement des infos de la page
         go();
     }
 
@@ -91,20 +97,23 @@ public class HomeActivity extends AppCompatActivity {
     public void go() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
+                // Appel de l'API pour récupérer la liste des coins (ici limité à 200)
                 String data = getDataFromHTTP("https://openapiv1.coinstats.app/coins?limit=200", "srkjExa1IBZMMoDmd5YTI4sWbLpce8KFavfrzjbKKvU=");
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         try {
+                            // Décodage du JSON pour obtenir la liste des CoinObject avec les infos dedans
                             List<CoinObject> coins = decodeJSON(data);
                             coinList.clear();
                             coinList.addAll(coins);
                             myAdapter.notifyDataSetChanged();
                         } catch (Exception e) {
-                            // tv.setText("Erreur lors de la recup crypto");
+                            Toast.makeText(HomeActivity.this, "Erreur lors de la recup crypto", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -151,9 +160,8 @@ public class HomeActivity extends AppCompatActivity {
             // Déconnexion de la connexion
             connexion.disconnect();
         } catch (Exception e) {
-            // En cas d'erreur, renvoie un message d'erreur
-            result = new StringBuilder("Erreur lors de la récupération des données");
             e.printStackTrace();
+            return null;
         }
         return result.toString();
     }
@@ -179,7 +187,7 @@ public class HomeActivity extends AppCompatActivity {
             double price = coinObject.getDouble("price");
             String icon = coinObject.getString("icon");
 
-            // Créer un objet Coin et l'ajouter à la liste
+            // Création d'un objet Coin et l'ajouter à la liste
             CoinObject coin = new CoinObject(id, name, symbol, icon, price);
             coins.add(coin);
         }

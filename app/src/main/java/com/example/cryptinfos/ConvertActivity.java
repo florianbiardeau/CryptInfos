@@ -54,36 +54,34 @@ public class ConvertActivity extends AppCompatActivity {
     private MaterialButton btn;
     private TextView lienAide;
 
-    private final Handler handler = new Handler(Looper.getMainLooper());
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.convert_layout);
 
+        // Récupération des éléments de la page
         spinner1 = findViewById(R.id.spinner1);
         spinner2 = findViewById(R.id.spinner2);
         edt1 = findViewById(R.id.editTextNumber1);
         edt2 = findViewById(R.id.editTextNumber2);
         btn = findViewById(R.id.switchButton);
-
         lienAide = findViewById(R.id.lienAcheterCrytpo);
 
-        // Souligner le lien et ajouter un comportement de clic
+        // Rendre le lien cliquable
         lienAide.setPaintFlags(lienAide.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         lienAide.setOnClickListener(v -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.journaldugeek.com/crypto/acheter/"));
             v.getContext().startActivity(browserIntent);
         });
 
-        // Mise en place de la Toolbar
+        // Récupération de la ToolBar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Chargement initial des données de cryptomonnaies
+        // Chargement des infos de la page
         loadCoins();
 
-        // Déclenche la conversion dès que l'utilisateur modifie le montant
+        // Déclenchement de la conversion dès que l'utilisateur modifie le montant
         edt1.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -167,7 +165,6 @@ public class ConvertActivity extends AppCompatActivity {
                             spinner2.setAdapter(adapter);
                         } catch (Exception e) {
                             Toast.makeText(ConvertActivity.this, "Erreur lors du chargement des coins", Toast.LENGTH_LONG).show();
-                            e.printStackTrace();
                         }
                     }
                 });

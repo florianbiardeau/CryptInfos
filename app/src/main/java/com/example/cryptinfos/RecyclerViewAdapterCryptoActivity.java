@@ -24,7 +24,6 @@ public class RecyclerViewAdapterCryptoActivity extends RecyclerView.Adapter<Elem
     public RecyclerViewAdapterCryptoActivity(Context context, List<String> liens) {
         this.context = context;
         this.liens = liens;
-        System.out.println("lienssss " +liens);
     }
 
     public ElementViewHolderCryptoActivity onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -34,11 +33,14 @@ public class RecyclerViewAdapterCryptoActivity extends RecyclerView.Adapter<Elem
 
     @Override
     public void onBindViewHolder(ElementViewHolderCryptoActivity holder, int position) {
+        // Récupération de l'url courant
         String url = liens.get(position);
+
+        // Placement du lien dans le TextView
         TextView lien = holder.lienTextView;
         lien.setText(url);
 
-        // Rendre chaque item cliquable pour ouvrir le lien
+        // Rendre chaque item cliquable pour ouvrir le lien (Intent Implicite)
         lien.setPaintFlags(lien.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         lien.setOnClickListener(v -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));

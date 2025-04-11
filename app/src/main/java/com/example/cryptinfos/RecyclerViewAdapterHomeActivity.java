@@ -30,16 +30,20 @@ public class RecyclerViewAdapterHomeActivity extends RecyclerView.Adapter<Elemen
 
     @Override
     public void onBindViewHolder(ElementViewHolderHomeActivity holder, int position) {
+        // Récupération de la crypto courante
         CoinObject coin = coinList.get(position);
 
+        // Placement des infos dans les TextView
         holder.nameTextView.setText(coin.getName());
         holder.symbolTextView.setText(coin.getSymbol());
         holder.priceTextView.setText(String.valueOf(coin.getPrice()));
 
+        // Placement de l'image dans l'ImageView
         Glide.with(holder.itemView.getContext())
                 .load(coin.getIconUrl())
                 .into(holder.iconImageView);
 
+        // Rendre l'élément cliquable, et appelle l'activité CryproActivity en lui passant l'id de la crypto
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, CryptoActivity.class);
             intent.putExtra("id", coin.getId());
