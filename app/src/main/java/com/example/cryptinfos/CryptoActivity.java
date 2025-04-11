@@ -78,14 +78,16 @@ public class CryptoActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Récupération de l'ID de la crypto depuis l'intent
         Intent i = getIntent();
         id = i.getStringExtra("id");
 
+        // Initialisation du graphique et de la RecyclerView
         lineChart = findViewById(R.id.lineChart);
-
         recyclerView = findViewById(R.id.recyclerViewExplorers);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        // Chargement des données de la crypto et du graphique
         crypto();
         charts();
     }

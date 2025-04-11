@@ -68,18 +68,22 @@ public class ConvertActivity extends AppCompatActivity {
         btn = findViewById(R.id.switchButton);
 
         lienAide = findViewById(R.id.lienAcheterCrytpo);
+
+        // Souligner le lien et ajouter un comportement de clic
         lienAide.setPaintFlags(lienAide.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         lienAide.setOnClickListener(v -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.journaldugeek.com/crypto/acheter/"));
             v.getContext().startActivity(browserIntent);
         });
 
+        // Mise en place de la Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Chargement initial des données de cryptomonnaies
         loadCoins();
 
-        // Mise à jour de la conversion dès que le texte change
+        // Déclenche la conversion dès que l'utilisateur modifie le montant
         edt1.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -95,7 +99,7 @@ public class ConvertActivity extends AppCompatActivity {
             }
         });
 
-        // Mise à jour lors du changement de sélection dans les spinners
+        // Listener pour déclencher la conversion lors du changement de crypto sélectionnée
         AdapterView.OnItemSelectedListener selectionListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
