@@ -14,6 +14,7 @@ import android.widget.Toast;
  */
 public class NetworkReceiver extends BroadcastReceiver {
 
+    // Attribut servant à savoir si on a déjà eu un changement de connexion auparavant
     private boolean firstCheck = true;
 
     @Override
@@ -24,18 +25,21 @@ public class NetworkReceiver extends BroadcastReceiver {
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                 boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
-                // Si c'est le premier appel, on ne fait rien et on met firstCheck à false
+                // Si c'est le premier appel ...
                 if (firstCheck) {
+                    // ... et qu'on n'est pas connecté à Internet, on mets firstcheck à false pour notifier que l'on a déjà changer d'état ...
                     if (!isConnected) {
                         firstCheck = false;
-                    } else {
+                    } else { // ... et si on est connecté on ne fait rien (stop la méthode) car c'est "normal"
                         return;
                     }
                 }
 
+                // Si ce n'est pas le premier appel ...
                 if (isConnected) {
+                    // ... c'est qu'on a déjà perdu notre connexion une première fois donc on notifie qu'on la regagné ...
                     Toast.makeText(context, "📶 Connexion rétablie", Toast.LENGTH_LONG).show();
-                } else {
+                } else { // ... et si on est pas connecté on le notifie tout simplement
                     Toast.makeText(context, "❌ Connexion perdue, les données ne seront plus mis à jour", Toast.LENGTH_LONG).show();
                 }
             }
